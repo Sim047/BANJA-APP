@@ -29,12 +29,19 @@ const __dirname = path.dirname(__filename);
 const app = express();
 const server = http.createServer(app);
 
-const FRONTEND = process.env.FRONTEND_URL || "*";
+// FRONTEND URL(s) for CORS & socket origin
+// Accepts comma-separated values, e.g. "https://app.vercel.app,https://my-preview.vercel.app"
+// or a single '*' to allow all origins (not recommended for production)
+const FRONTEND = process.env.FRONTEND_URL || '*';
+const allowedOrigins = String(FRONTEND)
+  .split(',')
+  .map((s) => s.trim())
+  .filter(Boolean);
 
 // SOCKET.IO
 const io = new Server(server, {
   cors: {
-    origin: FRONTEND,
+    origin: allowedOrigins.includes('*') ? true : allowedOrigins,
     methods: ["GET", "POST", "PUT", "DELETE"],
   },
 });
@@ -45,7 +52,18 @@ const onlineUsers = new Map();
 app.set("onlineUsers", onlineUsers);
 
 // middleware
-app.use(cors({ origin: FRONTEND }));
+// Express CORS — allow requests only from allowedOrigins or '*' handling
+app.use(
+  cors({
+    origin: function (origin, callback) {
+      // allow non-browser requests (eg. server-to-server, curl) when origin is undefined
+      if (!origin) return callback(null, true);
+      if (allowedOrigins.includes('*')) return callback(null, true);
+      if (allowedOrigins.includes(origin)) return callback(null, true);
+      return callback(new Error('CORS origin not allowed'), false);
+    },
+  })
+);
 app.use(express.json({ limit: "10mb" }));
 
 // static uploads

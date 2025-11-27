@@ -27,3 +27,10 @@ Notes:
 
 Health check:
 - The backend exposes a lightweight GET / that returns { ok: true } — useful for Render health checks and uptime probes.
+
+Multiple frontend domains / CORS
+- The `FRONTEND_URL` env var now accepts a comma-separated list of allowed origins. This lets you allow both the production Vercel domain and preview domains (for example: `https://banja-app.vercel.app,https://banja-im2mxu6wp-sims-webs-projects.vercel.app`).
+- Examples:
+   - Only production: `FRONTEND_URL=https://banja-app.vercel.app`
+   - Production + preview: `FRONTEND_URL=https://banja-app.vercel.app,https://banja-im2mxu6wp-sims-webs-projects.vercel.app`
+   - Development wildcard (not recommended for production): `FRONTEND_URL=*`

@@ -25,6 +25,7 @@ These are short, actionable notes to help an AI agent be productive when editing
   - Messages are persisted in Mongo (`backend/src/models/Message.js`) and per-user hiding is implemented (`hiddenFor` array) — deleting vs hiding are distinct behaviors.
   - Auth is JWT-based (see `backend/src/routes/auth.js`) and client stores `token` + `user` in localStorage.
   - Frontend uses env var `VITE_API_URL` for axios / socket base URLs (look at `frontend/src/App.tsx` and `frontend/src/utils/api.ts`). Some files include legacy patterns (e.g., `process.env.REACT_APP_API_URL` in `frontend/src/socket.tsx`) — prefer `import.meta.env.VITE_API_URL` in Vite context.
+  - `FRONTEND_URL` on the backend accepts comma-separated domains (e.g., `https://banja-app.vercel.app,https://your-preview.vercel.app`). This allows preview/deployment domains while keeping CORS tight.
 
 - File upload handling:
   - Uploads are accepted at `POST /api/files/upload` (route in `backend/src/routes/files.js`) and served at `/uploads/*` from the `uploads/` directory.
