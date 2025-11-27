@@ -20,6 +20,7 @@ These are short, actionable notes to help an AI agent be productive when editing
 
 - Key integration & runtime patterns to preserve:
   - Socket flows are in `backend/src/server.js`. Events used by frontend include: `join_room`, `send_message`, `receive_message`, `edit_message`, `message_edited`, `delete_message`, `message_deleted`, `react`, `reaction_update`, `typing`, `presence_update`.
+  - Frontend uses a centralized socket client: `frontend/src/socket.tsx` exports `socket` and `SocketProvider`. Wrap the app with `SocketProvider` (see `frontend/src/main.tsx`) and import `socket` from `frontend/src/socket.tsx` instead of creating multiple clients.
   - Backend exposes the running `io` and `onlineUsers` map via `app.set('io', io)` and `app.set('onlineUsers', onlineUsers)` — other routes use these to emit socket events.
   - Messages are persisted in Mongo (`backend/src/models/Message.js`) and per-user hiding is implemented (`hiddenFor` array) — deleting vs hiding are distinct behaviors.
   - Auth is JWT-based (see `backend/src/routes/auth.js`) and client stores `token` + `user` in localStorage.

@@ -24,19 +24,14 @@ export const socket = io(API, {
 export const SocketContext = createContext<Socket | null>(null);
 
 export const SocketProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  // Do not auto-connect here. Connection should be triggered by the app
+  // once a user + token are available (see App.tsx). On unmount, if
+  // the socket is connected we'll disconnect to clean up resources.
   useEffect(() => {
-    // connect after verifying token or user loaded
-    socket.connect();
-
-    // identify to join personal room:
-    const currentUserId = localStorage.getItem('userId'); // or from your user store
-    if (currentUserId) {
-      socket.emit('identify', currentUserId);
-    }
-
-    // cleanup
     return () => {
-      socket.disconnect();
+      try {
+        if (socket && (socket as any).connected) socket.disconnect();
+      } catch (e) {}
     };
   }, []);
 

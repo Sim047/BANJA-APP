@@ -1,6 +1,6 @@
 // frontend/src/App.tsx
 import React, { useEffect, useState, useRef, Fragment } from "react";
-import io from "socket.io-client";
+import { socket } from "./socket";
 import axios from "axios";
 import dayjs from "dayjs";
 import localizedFormat from "dayjs/plugin/localizedFormat";
@@ -23,7 +23,6 @@ dayjs.extend(updateLocale);
 dayjs.updateLocale("en", { weekStart: 1 });
 
 const API = import.meta.env.VITE_API_URL || "http://localhost:5000";
-const socket = io(API, { autoConnect: false });
 
 const SAMPLE_AVATAR =
   "/mnt/data/c1621a7f-41b8-42c2-8b53-ba7d75f5e2dc.png";
