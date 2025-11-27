@@ -34,3 +34,8 @@ Multiple frontend domains / CORS
    - Only production: `FRONTEND_URL=https://banja-app.vercel.app`
    - Production + preview: `FRONTEND_URL=https://banja-app.vercel.app,https://banja-im2mxu6wp-sims-webs-projects.vercel.app`
    - Development wildcard (not recommended for production): `FRONTEND_URL=*`
+   - It also supports wildcard / pattern entries like `*.vercel.app` or `https://*.vercel.app` which will match any subdomain of vercel.app (useful for allowing preview deployments automatically).
+   - Examples:
+      - Exact whitelist: `FRONTEND_URL=https://banja-app.vercel.app,https://banja-im2mxu6wp-sims-webs-projects.vercel.app`
+      - Allow all Vercel subdomains: `FRONTEND_URL=https://banja-app.vercel.app,*.vercel.app`
+      - Development wildcard (not recommended for production): `FRONTEND_URL=*`

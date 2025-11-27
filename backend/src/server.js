@@ -38,10 +38,62 @@ const allowedOrigins = String(FRONTEND)
   .map((s) => s.trim())
   .filter(Boolean);
 
+function escapeRegExp(str) {
+  return str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
+function originMatchesPattern(origin, pattern) {
+  // pattern can be a host wildcard like '*.vercel.app' or include protocol 'https://*.vercel.app'
+  if (!origin || !pattern) return false;
+
+  try {
+    const originUrl = new URL(origin);
+    let host = originUrl.host.toLowerCase(); // includes port if present
+
+    // remove protocol from pattern if present
+    let p = pattern.replace(/^https?:\/\//i, '').toLowerCase();
+
+    // exact host match
+    if (p === host) return true;
+
+    // wildcard patterns
+    if (p.includes('*')) {
+      // convert wildcard to regex
+      const regex = new RegExp('^' + p.split('*').map(escapeRegExp).join('.*') + '$');
+      return regex.test(host);
+    }
+
+    return false;
+  } catch (e) {
+    return false;
+  }
+}
+
+function isOriginAllowed(origin) {
+  if (!origin) return true; // non-browser requests
+  if (allowedOrigins.includes('*')) return true;
+  if (allowedOrigins.includes(origin)) return true;
+
+  // allow patterns
+  for (const p of allowedOrigins) {
+    if (p.includes('*') && originMatchesPattern(origin, p)) return true;
+  }
+
+  return false;
+}
+
 // SOCKET.IO
 const io = new Server(server, {
   cors: {
-    origin: allowedOrigins.includes('*') ? true : allowedOrigins,
+    // socket.io supports function origins — we use a checker so patterns are allowed
+    origin: function (origin, callback) {
+      try {
+        if (isOriginAllowed(origin)) return callback(null, true);
+        return callback(new Error('Origin not allowed'), false);
+      } catch (e) {
+        return callback(new Error('Origin check failed'), false);
+      }
+    },
     methods: ["GET", "POST", "PUT", "DELETE"],
   },
 });
@@ -58,8 +110,7 @@ app.use(
     origin: function (origin, callback) {
       // allow non-browser requests (eg. server-to-server, curl) when origin is undefined
       if (!origin) return callback(null, true);
-      if (allowedOrigins.includes('*')) return callback(null, true);
-      if (allowedOrigins.includes(origin)) return callback(null, true);
+      if (isOriginAllowed(origin)) return callback(null, true);
       return callback(new Error('CORS origin not allowed'), false);
     },
   })
