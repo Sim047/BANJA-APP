@@ -161,6 +161,13 @@ body {
   color: var(--text);
   line-height: 1.38rem;
   border-top-left-radius: 0.25rem;
+  position: relative;
+  overflow: visible;
+}
+
+/* message wrapper to contain reactions */
+.message > div {
+  position: relative;
 }
 
 /* my messages */
@@ -207,6 +214,17 @@ body {
   align-items: center;
   gap: 0.5rem;
   margin-top: 1rem;
+  flex-wrap: wrap;
+}
+
+.composer input[type="file"] {
+  max-width: 140px;
+  font-size: 0.875rem;
+}
+
+.composer .btn {
+  white-space: nowrap;
+  min-width: 70px;
 }
 
 /* reacted class */
@@ -300,6 +318,33 @@ body {
   .layout { flex-direction: column; }
   .sidebar { width: 100%; }
   .message { max-width: 92%; }
+  
+  /* Make reactions wrap and stay inside bubble on mobile */
+  .message .flex.gap-2 {
+    flex-wrap: wrap;
+    gap: 0.25rem;
+  }
+  
+  .message button {
+    font-size: 0.75rem;
+    padding: 0.25rem 0.5rem;
+  }
+  
+  /* Composer responsive */
+  .composer {
+    flex-wrap: wrap;
+  }
+  
+  .composer input[type="file"] {
+    width: 100%;
+    max-width: 100%;
+    margin-top: 0.5rem;
+  }
+  
+  .composer .input {
+    min-width: 100%;
+    flex: 1 1 100%;
+  }
 }
 
 /* =========================================================
