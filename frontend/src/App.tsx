@@ -90,8 +90,9 @@ export default function App() {
 
   // dynamic pages
   const [view, setView] = useState<
-    "chat" | "all-users" | "followers" | "following"
+    "chat" | "all-users" | "followers" | "following" | "rooms" | "direct-messages"
   >("chat");
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
 
   // editing messages
   const [editingMessageId, setEditingMessageId] =
@@ -758,11 +759,15 @@ const myStatus =
       />
     );
   }
+  
+  // Check if current view should show full-page (collapsed sidebar)
+  const isFullPageView = ["all-users", "followers", "following", "rooms", "direct-messages"].includes(view);
+  
   // ---- MAIN LAYOUT ----
   return (
-    <div className="layout container flex gap-4 p-4 min-h-screen">
+    <div className="layout container flex gap-4 p-4 min-h-screen relative">
       {/* ---------------- SIDEBAR ---------------- */}
-      <aside className="sidebar">
+      <aside className={`sidebar transition-all duration-300 ${isFullPageView ? 'sidebar-collapsed' : 'sidebar-expanded'}`}>
         <div>
           {/* Header / Logo / Theme toggle */}
           <div className="flex items-center justify-between mb-6 px-2">
@@ -915,14 +920,37 @@ const myStatus =
           </div>
         </div>
 
-        {/* LOGOUT */}
-        <button className="btn w-full mt-6" onClick={logout}>
-          Log Out
+        {/* LOGOUT - Always visible */}
+        <button 
+          className={`btn w-full mt-6 ${isFullPageView ? 'p-3' : ''}`} 
+          onClick={logout}
+          title={isFullPageView ? "Log Out" : ""}
+        >
+          {isFullPageView ? (
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              className="mx-auto"
+            >
+              <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+              <polyline points="16 17 21 12 16 7" />
+              <line x1="21" y1="12" x2="9" y2="12" />
+            </svg>
+          ) : (
+            'Log Out'
+          )}
         </button>
       </aside>
 
       {/* ---------------- MAIN VIEW ---------------- */}
-      <main className="main flex-1 flex flex-col">
+      <main className={`main flex-1 flex flex-col transition-all duration-300 ${isFullPageView ? 'main-fullwidth' : ''}`}>
         {/* FOLLOWERS PAGE */}
         {view === "followers" && (
           <FollowersList

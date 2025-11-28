@@ -101,6 +101,19 @@ body {
   -webkit-backdrop-filter: none;
   backdrop-filter: none;
   padding: 1rem;
+  transition: all 0.3s ease;
+}
+
+/* Sidebar states */
+.sidebar-expanded {
+  width: 280px;
+  min-width: 280px;
+}
+
+.sidebar-collapsed {
+  width: 80px;
+  min-width: 80px;
+  overflow: hidden;
 }
 
 /* force sidebar as solid box in dark too */
@@ -118,6 +131,17 @@ body {
   background: var(--card);
   border: 1px solid var(--border);
   border-radius: 0.85rem;
+  color: var(--text);
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  transition: all 0.3s ease;
+}
+
+/* Main content full width when sidebar collapsed */
+.main-fullwidth {
+  width: 100%;
+  max-width: 100%;
+}
   color: var(--text);
   -webkit-backdrop-filter: none;
   backdrop-filter: none;
@@ -375,13 +399,17 @@ body {
     padding: 0.5rem !important;
   }
   
-  .sidebar { 
-    width: 100%; 
+  .sidebar,
+  .sidebar-expanded,
+  .sidebar-collapsed { 
+    width: 100% !important;
+    min-width: 100% !important;
     margin-bottom: 1rem;
   }
   
-  .main {
-    width: 100%;
+  .main,
+  .main-fullwidth {
+    width: 100% !important;
   }
   
   .message { 
